@@ -8,11 +8,24 @@
 (defpackage :cl-ansi-text
   (:use :common-lisp)
   (:export
-   :with-color
-   :make-color-string
-   :+reset-color-string+
+   #:with-color
+   #:make-color-string
+   #:+resetp-color-string+
    ))
 (in-package :cl-ansi-text)
+
+;;; !!! NOTE TO CCL USERS !!!
+;;;
+;;; This seems to be *required* to make this compile in CCL. The
+;;; reason is that CCL expects to be able to inline on compile, but
+;;; structs don't set up that infrastructure by default.
+;;;
+;;; At least from the thread "Compiler problem, MCL 3.9" by Arthur
+;;; Cater around '96.
+#+ccl(common-lisp:eval-when (:compile-toplevel)
+       (defmethod make-load-form ((obj cl-colors:rgb )  &optional env)
+	 (make-load-form-saving-slots obj)))
+
 
 (defun explode (input)
   "Assumes input is a vector, returns it as a list"
@@ -23,15 +36,13 @@
   not already"
   (apply #'concatenate 'list
 	 (mapcar
-	  #'(lambda (x)
-	      (if (listp x)
-		  x
-		  (list x)))
+	  #'alexandria:ensure-list
 	  items) ))
 
 
 (defmacro switch (test-function thing &rest forms)
    " When test-function has to get repeatedly applied to thing to
+
  determine if the result should be executed, SWITCH may prove beneficial
  (switch
      string=
@@ -66,7 +77,7 @@
 	(0 cl-colors:+black+)
 	(1 cl-colors:+red+)
 	(2 cl-colors:+green+)
-	(3 cl-colors:+yellow+)		;kind of darkyellow
+	(3 cl-colors:+yellow+)
 	(4 cl-colors:+blue+)
 	(5 cl-colors:+magenta+)
 	(6 cl-colors:+cyan+)
@@ -75,14 +86,25 @@
 	(0 cl-colors:+darkgrey+)
 	(1 cl-colors:+darkred+)
 	(2 cl-colors:+darkgreen+)
-	(3 cl-colors:+wheat+)
+	(3 cl-colors:+wheat+) 	;kind of darkyellow
 	(4 cl-colors:+darkblue+)
 	(5 cl-colors:+darkmagenta+)
 	(6 cl-colors:+darkcyan+)
 	(7 cl-colors:+grey+))))
 
+(defun eq-colors (a b)
+  "Equality for colors"
+  ;; eql, equal doesn't quite work for compiled cl-colors on CCL
+  (and
+   (= (cl-colors:rgb-red a)
+      (cl-colors:rgb-red b))
+   (= (cl-colors:rgb-green a)
+      (cl-colors:rgb-green b))
+   (= (cl-colors:rgb-blue a)
+      (cl-colors:rgb-blue b))))
+
 (defun cl-colors-to-ansi (color)
-  (switch eql color
+  (switch eq-colors color
 	  ;;bright
 	  (cl-colors:+black+ '(30 1))
 	  (cl-colors:+red+ '(31 1))
@@ -104,9 +126,9 @@
 
 (defun find-color-set (color)
   "Find the list denoting the color"
-  (typecase color
-      (cl-colors:rgb (cl-colors-to-ansi color))
-      (list color)))
+  (etypecase color
+    (cl-colors:rgb (cl-colors-to-ansi color))
+    (list color)))
 
 (defun build-control-string (color)
   "Build the basic control character list"
@@ -145,3 +167,21 @@ then writes out the string denoting a `reset`."
 			 ,control-string
 			 +reset-color-string+)))
        (format ,dest ,sym ,args))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; ~/.../ functions.
+;;; Suggested by H4ns
+;;; http://www.lispworks.com/documentation/HyperSpec/Body/22_ced.htm
+;;; Not ready for general use.
+
+(defun color-red (stream input colon-p at-p &rest params)
+  (format stream "~a" (make-color-string cl-colors:+red+)))
+
+(defun color-green (stream input colon-p at-p &rest params)
+  (format stream "~a" (make-color-string cl-colors:+green+)))
+
+(defun color-blue (stream input colon-p at-p &rest params)
+  (format stream "~a" (make-color-string cl-colors:+blue+)))
+
+(defun color-reset (stream input colon-p at-p &rest params)
+  (format stream "~a" +reset-color-string+))
