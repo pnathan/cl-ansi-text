@@ -6,6 +6,7 @@ Because color in your terminal is nice.
 
 Examples:
 
+```
 [2]> (cl-ansi-text:with-color (cl-colors:+red+) (format t "hi"))
 hi
 NIL
@@ -15,7 +16,7 @@ NIL
 [4]> (cl-ansi-text:with-color (cl-colors:+blue+) (format t "hi"))
 hi
 NIL
-
+```
 
 Note that your terminal MUST be ANSI-compliant to show these
 colors. My SLIME REPL (as of Feb 2013) does not display these
