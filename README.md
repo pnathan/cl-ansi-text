@@ -28,3 +28,5 @@ encountered in testing. The interested reader is advised to check the
 MAKE-LOAD-FORM defmethod in cl-ansi-text.lisp.
 
 An earlier variant was tested on OSX 10.6 with SBCL.
+
+License: LLGPL
