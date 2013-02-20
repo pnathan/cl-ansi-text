@@ -40,57 +40,35 @@
 	  items) ))
 
 
-(defmacro switch (test-function thing &rest forms)
-   " When test-function has to get repeatedly applied to thing to
-
- determine if the result should be executed, SWITCH may prove beneficial
- (switch
-     string=
-   input
-   (value
-    thing-to-do-if-value string= input))"
-
-  (let ((cond-form-sym
-         (append
-          (list 'COND)
-          ;; Form up the forms.
-          (mapcar
-          #'(lambda (form)
-              `,(list
-                 (list test-function thing (car form))
-                 (progn (cadr form))))
-          forms)
-          ;; have a useful error
-          `((t
-             (error
-              "Unable to match the condition ~a using ~a"
-              ,thing '#',test-function ))))))
-    cond-form-sym))
-
 (defparameter +reset-color-string+
   (concatenate 'string (list (code-char 27) #\[ #\0 #\m)))
 
+(defvar +bright-colors+
+	(vector
+         cl-colors:+black+
+         cl-colors:+red+
+         cl-colors:+green+
+         cl-colors:+yellow+
+         cl-colors:+blue+
+         cl-colors:+magenta+
+         cl-colors:+cyan+
+         cl-colors:+white+))
+
+(defvar +colors+
+  (vector
+   cl-colors:+darkgrey+
+   cl-colors:+darkred+
+   cl-colors:+darkgreen+
+   cl-colors:+wheat+ 	;kind of darkyellow
+   cl-colors:+darkblue+
+   cl-colors:+darkmagenta+
+   cl-colors:+darkcyan+
+   cl-colors:+grey+))
+
 (defun ansi-to-cl-colors (color-code &optional bright)
-  (if (or bright
-	  (eql bright 1))
-      (case color-code
-	(0 cl-colors:+black+)
-	(1 cl-colors:+red+)
-	(2 cl-colors:+green+)
-	(3 cl-colors:+yellow+)
-	(4 cl-colors:+blue+)
-	(5 cl-colors:+magenta+)
-	(6 cl-colors:+cyan+)
-	(7 cl-colors:+white+))
-      (case color-code
-	(0 cl-colors:+darkgrey+)
-	(1 cl-colors:+darkred+)
-	(2 cl-colors:+darkgreen+)
-	(3 cl-colors:+wheat+) 	;kind of darkyellow
-	(4 cl-colors:+darkblue+)
-	(5 cl-colors:+darkmagenta+)
-	(6 cl-colors:+darkcyan+)
-	(7 cl-colors:+grey+))))
+  (aref (if bright
+            +bright-colors+
+            +colors+) color-code))
 
 (defun eq-colors (a b)
   "Equality for colors"
@@ -104,7 +82,7 @@
       (cl-colors:rgb-blue b))))
 
 (defun cl-colors-to-ansi (color)
-  (switch eq-colors color
+  (alexandria:switch (color :test #'eq-colors)
 	  ;;bright
 	  (cl-colors:+black+ '(30 1))
 	  (cl-colors:+red+ '(31 1))
