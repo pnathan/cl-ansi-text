@@ -14,8 +14,6 @@
    #:with-color
    #:make-color-string
    #:+reset-color-string+
-   #:+term-colors+
-   #:+term-effects+
    #:*enabled
    ))
 (in-package :cl-ansi-text)
@@ -114,8 +112,7 @@
   (etypecase color
     ;; Did we get a cl-color that we know about?
     (cl-colors:rgb (cl-colors-to-ansi color))
-    (symbol (term-colors-to-ansi color))
-    (list color)))
+    (symbol (term-colors-to-ansi color))))
 
 (defun find-effect-code (effect)
   "Returns the number for the text effect OR
@@ -127,6 +124,11 @@ effect should be a member of +term-effects+"
 
 (defun find-style-code (style)
   (cdr (assoc style +text-style+)))
+
+(defun rgb-code-p (color)
+  (typecase color
+    (list t)
+    (integer t)))
 
 (defun generate-control-string (code)
   "General ANSI code"
@@ -150,14 +152,24 @@ Style"
     (assert  effect-code)
     (assert  style-code)
 
-    ;; Returns a list for inspection.
+    ;; Returns a list for inspection; next layer turns it back into a
+    ;; string.
     (concatenate
      'list
-     (if (eq effect-code t)
-	 (generate-color-string (+ style-code color-code))
-	 (generate-color-string (format nil "~a;~a"
-					(+ style-code color-code)
-					effect-code))))))
+     ;; We split between RGB and 32-color here; this preserves the
+     ;; interface without cluttering the 32-color code up.
+     ;;
+     ;; Note that the assumption is made that rgb code doesn't have
+     ;; effects. That could be a bug.
+     (if (rgb-code-p color)
+	 (rgb-color-code color style)
+	 (if (eq effect-code t)
+	     (generate-color-string (+ style-code color-code))
+	     (generate-color-string (format nil "~a;~a"
+					    (+ style-code color-code)
+					    effect-code)))))
+
+    ))
 ;; Public callables.
 
 (defun make-color-string (color &key
@@ -194,17 +206,17 @@ then writes out the string denoting a `reset`."
      (* 6 (second ansi-domain))
      (third ansi-domain))))
 
-(defun code-from-rgb (locationeffect red green blue)
-  (format nil "~d;5;~d" (if (eql effect :foreground) 38 48)
+(defun code-from-rgb (style red green blue)
+  (format nil "~d;5;~d" (if (eql style :foreground) 38 48)
           (rgb-to-ansi red green blue)))
 
 
-(defgeneric rgb-color-code (color &optional effect)
+(defgeneric rgb-color-code (color &optional style)
   (:documentation
    "Returns the 256-color code suitable for rendering on the Linux
 extensions to xterm"))
 
-(defmethod rgb-color-code ((color list) &optional (effect :unset))
+(defmethod rgb-color-code ((color list) &optional (style :foreground))
   (unless (consp color)
     (error "~a must be a three-integer list" color))
 
@@ -217,7 +229,8 @@ extensions to xterm"))
                  (first color)
                  (second color)
                  (third color)))
-(defmethod rgb-color-code ((color integer) &optional (effect :unset))
+
+(defmethod rgb-color-code ((color integer) (style :foreground))
   ;; Takes RGB integer ala Web integers
   (code-from-rgb effect
                  ;; classic bitmask
