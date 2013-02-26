@@ -14,8 +14,7 @@
    #:with-color
    #:make-color-string
    #:+reset-color-string+
-   #:*enabled
-   ))
+   #:*enabled*))
 (in-package :cl-ansi-text)
 
 ;;; !!! NOTE TO CCL USERS !!!
@@ -139,8 +138,9 @@ effect should be a member of +term-effects+"
   (format nil "~am" (generate-control-string code)))
 
 (defun build-control-string (color
-			     effect
-			     style)
+			     &optional
+			     (effect :unset)
+			     (style :foreground))
   "Color (cl-color or term-color)
 Effect
 Style"
@@ -172,25 +172,37 @@ Style"
 ;; Public callables.
 
 (defun make-color-string (color &key
-				       (effect :unset)
-				       (style :foreground))
+				  (effect :unset)
+				  (style :foreground)
+				  ((enabled *enabled*) *enabled*))
   "Takes either a cl-color or a list denoting the ANSI colors and
-returns a string sufficient to change to the given color"
-  (concatenate 'string
-	  (build-control-string color effect style)))
+returns a string sufficient to change to the given color.
 
-(defmacro with-color ((color  &key (stream t)
+Will be dynamically controlled by *enabled* unless manually specified
+otherwise"
+  (when *enabled*
+    (concatenate 'string
+		 (build-control-string color effect style))))
+
+(defmacro with-color ((color  &key
+			      (stream t)
 			      (effect :unset)
 			      (style :foreground))
 		      &body body)
   "Writes out the string denoting a switch to `color`, executes body,
-then writes out the string denoting a `reset`."
+then writes out the string denoting a `reset`.
+
+*enabled* dynamically controls expansion.."
   `(progn
-    (format ,stream "~a" (make-color-string ,color ,effect ,style))
+    (when *enabled*
+      (format ,stream "~a" (make-color-string ,color
+					      :effect ,effect
+					      :style ,style)))
     (unwind-protect
 	 (progn
 	   ,@body)
-      (format ,stream "~a" +reset-color-string+))))
+      (when *enabled*
+	(format ,stream "~a" +reset-color-string+)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;  RGB color codes for some enhanced terminals

@@ -8,6 +8,7 @@
 
 (in-package :cl-ansi-text-test)
 (use-package :fiveam)
+(use-package :cl-ansi-text)
 
 (def-suite test-suite
     :description "test suite.")
@@ -23,6 +24,29 @@
 	     (cl-ansi-text::build-control-string :red :unset :background)))
   (is (equal '(#\Esc #\[ #\4 #\2 #\; #\1 #\m)
 	     (cl-ansi-text::build-control-string :green :bright :background))))
+
+(test enabled-connectivity
+  "Test *enabled*'s capability"
+ (is (equal  '(#\Esc #\[ #\3 #\1 #\m)
+	     (let ((*enabled* t))
+	       (concatenate
+		'list
+		(cl-ansi-text:make-color-string :red)))))
+ (is (equal  '()
+	    (let ((*enabled* nil))
+	      (concatenate
+	       'list
+	       (cl-ansi-text:make-color-string :red)))))
+ (is (equal "hi"
+	    (let ((*enabled* nil))
+	      (with-output-to-string (s)
+		(with-color (:red :stream s) (format s "hi"))))))
+ (is (equal '(#\Esc #\[ #\3 #\1 #\m #\T #\e #\s #\t #\! #\Esc #\[ #\0 #\m)
+	    (concatenate
+	     'list
+	     (with-output-to-string (s)
+	       (with-color (:red :stream s)
+		 (format s "Test!")))))))
 
 (test rgb-suite
   "Test RGB colors"
