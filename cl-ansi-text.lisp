@@ -109,7 +109,7 @@
 
 (defun find-color-code (color)
   "Find the list denoting the color"
-  (etypecase color
+  (typecase color
     ;; Did we get a cl-color that we know about?
     (cl-colors:rgb (cl-colors-to-ansi color))
     (symbol (term-colors-to-ansi color))))
@@ -159,17 +159,16 @@ Style"
      ;; We split between RGB and 32-color here; this preserves the
      ;; interface without cluttering the 32-color code up.
      ;;
-     ;; Note that the assumption is made that rgb code doesn't have
-     ;; effects. That could be a bug.
-     (if (rgb-code-p color)
-	 (rgb-color-code color style)
-	 (if (eq effect-code t)
-	     (generate-color-string (+ style-code color-code))
-	     (generate-color-string (format nil "~a;~a"
-					    (+ style-code color-code)
-					    effect-code)))))
+     (cond ((rgb-code-p color)
+	    (generate-color-string (rgb-color-code color style)))
 
-    ))
+	 ((eq effect-code t)
+	     (generate-color-string (+ style-code color-code)))
+
+	 (t
+	  (generate-color-string (format nil "~a;~a"
+					 (+ style-code color-code)
+					 effect-code)))))))
 ;; Public callables.
 
 (defun make-color-string (color &key
@@ -207,7 +206,8 @@ then writes out the string denoting a `reset`."
      (third ansi-domain))))
 
 (defun code-from-rgb (style red green blue)
-  (format nil "~d;5;~d" (if (eql style :foreground) 38 48)
+  (format nil "~d;5;~d"
+	  (if (eql style :foreground) 38 48)
           (rgb-to-ansi red green blue)))
 
 
@@ -225,14 +225,14 @@ extensions to xterm"))
                (integerp (second color)))
     (error "~a must have three integers" color))
 
-  (code-from-rgb effect
+  (code-from-rgb style
                  (first color)
                  (second color)
                  (third color)))
 
-(defmethod rgb-color-code ((color integer) (style :foreground))
+(defmethod rgb-color-code ((color integer) &optional (style :foreground))
   ;; Takes RGB integer ala Web integers
-  (code-from-rgb effect
+  (code-from-rgb style
                  ;; classic bitmask
                  (ash  (logand color #xff0000) -16)
                  (ash  (logand color #x00ff00) -8)
