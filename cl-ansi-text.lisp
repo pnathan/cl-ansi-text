@@ -159,16 +159,15 @@ Style"
      ;; We split between RGB and 32-color here; this preserves the
      ;; interface without cluttering the 32-color code up.
      ;;
-     (cond ((rgb-code-p color)
-	    (generate-color-string (rgb-color-code color style)))
+     (let ((codes nil))
+       (unless (eq effect-code t)
+           (setf codes (cons effect-code codes)))
+       (if (rgb-code-p color)
+           (setf codes (cons (rgb-color-code color style) codes))
+           (setf codes (cons (+ style-code color-code) codes)))
 
-	 ((eq effect-code t)
-	     (generate-color-string (+ style-code color-code)))
+       (generate-color-string (format nil "~{~A~^;~}" codes))))))
 
-	 (t
-	  (generate-color-string (format nil "~a;~a"
-					 (+ style-code color-code)
-					 effect-code)))))))
 ;; Public callables.
 
 (defun make-color-string (color &key
