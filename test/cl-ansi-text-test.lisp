@@ -2,7 +2,8 @@
 ;; test suite for cl-ansi-text
 
 (defpackage :cl-ansi-text-test
-  (:use :cl
+  (:use :common-lisp
+        :cl-user
 	:cl-ansi-text
 	:fiveam))
 
@@ -65,4 +66,19 @@
   )
 
 
-(run! 'test-suite)
+
+(defun run-tests ()
+  (let  ((results (run 'test-suite)))
+    (explain! results)
+    (if (position-if #'(lambda (e)
+                         (eq (type-of e)
+                             'IT.BESE.FIVEAM::TEST-FAILURE
+                             ))
+                     results)
+        nil
+        t)))
+
+(defun ci-run ()
+  (if (run-tests)
+      (cl-user::exit :code 0)
+      (cl-user::exit :code 1)))
