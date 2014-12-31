@@ -40,7 +40,7 @@ There are also functions with the name of the colors, that return the string, co
     (yellow "Five") " test results went " (red "terribly wrong") "!"))
 ; Five test results went terribly wrong!
 ; => "Five test results went terribly wrong!"
-
+```
 At any point, you can bind the `*enabled*` special variable to `nil`, and anything inside that binding will not be printed colorfully:
 ```lisp
 * (let (cl-ansi-text:*enabled*)
