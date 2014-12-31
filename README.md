@@ -12,8 +12,6 @@ Because color in your terminal is nice.
 ; => (:CL-ANSI-TEXT)
 ```
 
-### `(with-color ((color  &key (stream t) (effect :unset) (style :foreground)) &body body))`
-
 The main macro is called `with-color`, which creates an enviroment where everything that is put on `stream` gets colored according to `color`. Color options are `:black`, `:red`, `:green`, `:yellow`, `:blue`, `:magenta`, `:cyan` and `:white`. You can also use a color structure from cl-colors, like `cl-colors:+red+`.
 ```lisp
 * (import 'cl-ansi-text:with-color)  
