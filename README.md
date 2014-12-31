@@ -41,6 +41,12 @@ There are also functions with the name of the colors, that return the string, co
 ; Five test results went terribly wrong!
 ; => "Five test results went terribly wrong!"
 
+At any point, you can bind the `*enabled*` special variable to `nil`, and anything inside that binding will not be printed colorfully:
+```lisp
+* (let (cl-ansi-text:*enabled*)
+    (princ (red "This string is printed normally")))
+```
+
 # Note
 
 Note that your terminal MUST be ANSI-compliant to show these
