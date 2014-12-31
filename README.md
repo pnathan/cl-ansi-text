@@ -2,6 +2,8 @@
 
 Because color in your terminal is nice.
 
+[![Build Status](https://travis-ci.org/pnathan/cl-ansi-text.svg?branch=master)](https://travis-ci.org/pnathan/cl-ansi-text)
+
 ## Usage
 ```lisp
 * (ql:quickload :cl-ansi-text)
