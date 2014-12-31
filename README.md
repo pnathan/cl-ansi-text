@@ -1,22 +1,53 @@
-cl-ansi-text
+# cl-ansi-text
 
 Because color in your terminal is nice.
 
-
-
-Examples:
-
+## Usage
+```lisp
+* (ql:quickload :cl-ansi-text)
+;To load "cl-ansi-text":
+;  Load 1 ASDF system:
+;    cl-ansi-text
+;; Loading "cl-ansi-text"
+; => (:CL-ANSI-TEXT)
 ```
-[2]> (cl-ansi-text:with-color (cl-colors:+red+) (format t "hi"))
-hi
-NIL
-[3]> (cl-ansi-text:with-color (cl-colors:+green+) (format t "hi"))
-hi
-NIL
-[4]> (cl-ansi-text:with-color (cl-colors:+blue+) (format t "hi"))
-hi
-NIL
+
+The main macro is called `with-color`, which creates an enviroment where everything that is put on `stream` gets colored according to `color`. Color options are `:black`, `:red`, `:green`, `:yellow`, `:blue`, `:magenta`, `:cyan` and `:white`. You can also use a color structure from cl-colors, like `cl-colors:+red+`.
+```lisp
+* (import 'cl-ansi-text:with-color)  
+; => T
+* (with-color (:red)
+    (princ "Gets printed red...")
+    (princ "and this too!"))
+; Gets printed red...and this too!
+; => "and this too!"
 ```
+
+There are also functions with the name of the colors, that return the string, colored:
+```lisp
+* (import 'cl-ansi-text:yellow)
+; => T
+* (yellow "Yellow string")
+; => "Yellow string"
+* (princ (yellow "String with yellow background" :style :background))
+; "String with yellow background"
+; => "String with yellow background"
+* (import 'cl-ansi-text:red)
+; => T
+* (princ
+   (concatenate
+    'string
+    (yellow "Five") " test results went " (red "terribly wrong") "!"))
+; Five test results went terribly wrong!
+; => "Five test results went terribly wrong!"
+```
+At any point, you can bind the `*enabled*` special variable to `nil`, and anything inside that binding will not be printed colorfully:
+```lisp
+* (let (cl-ansi-text:*enabled*)
+    (princ (red "This string is printed normally")))
+```
+
+# Note
 
 Note that your terminal MUST be ANSI-compliant to show these
 colors. My SLIME REPL (as of Feb 2013) does not display these
