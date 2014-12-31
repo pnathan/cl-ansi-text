@@ -65,7 +65,49 @@
 						 :unset :background)))
   )
 
+(test color-named-functions
+  (let ((str "Test string."))
+    (is (equal (black str)
+               (with-output-to-string (s)
+                 (with-color (:black :stream s)
+                   (format s str)))))
+    (is (equal (red str)
+               (with-output-to-string (s)
+                 (with-color (:red :stream s)
+                   (format s str)))))
 
+    (is (equal (green str)
+               (with-output-to-string (s)
+                 (with-color (:green :stream s)
+                   (format s str)))))
+
+    (is (equal (yellow str)
+               (with-output-to-string (s)
+                 (with-color (:yellow :stream s)
+                   (format s str)))))
+    (is (equal (blue str)
+               (with-output-to-string (s)
+                 (with-color (:blue :stream s)
+                   (format s str)))))
+    (is (equal (magenta str)
+               (with-output-to-string (s)
+                 (with-color (:magenta :stream s)
+                   (format s str)))))
+    (is (equal (cyan str)
+               (with-output-to-string (s)
+                 (with-color (:cyan :stream s)
+                   (format s str)))))
+    (is (equal (white str)
+               (with-output-to-string (s)
+                 (with-color (:white :stream s)
+                   (format s str)))))))
+
+(test color-named-functions-*enabled*
+  (let ((str "Other test string.")
+        (*enabled* nil))
+    (is
+     (equal str
+            (white (cyan (magenta (blue (yellow (green (red (black str))))))))))))
 
 (defun run-tests ()
   (let  ((results (run 'test-suite)))

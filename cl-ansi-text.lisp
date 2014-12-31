@@ -14,7 +14,15 @@
    #:with-color
    #:make-color-string
    #:+reset-color-string+
-   #:*enabled*))
+   #:*enabled*
+   #:black
+   #:red
+   #:green
+   #:yellow
+   #:blue
+   #:magenta
+   #:cyan
+   #:white))
 (in-package :cl-ansi-text)
 
 ;;; !!! NOTE TO CCL USERS !!!
@@ -48,17 +56,18 @@
    cl-colors:+white+)
   "CL-COLORS colors")
 
-(defparameter +term-colors+
-  (vector
-   :black
-   :red
-   :green
-   :yellow
-   :blue
-   :magenta
-   :cyan
-   :white)
-  "Basic colors")
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defparameter +term-colors+
+    (vector
+     :black
+     :red
+     :green
+     :yellow
+     :blue
+     :magenta
+     :cyan
+     :white)
+    "Basic colors"))
 
 (defparameter +text-style+
   '((:foreground . 30)
@@ -193,15 +202,41 @@ then writes out the string denoting a `reset`.
 
 *enabled* dynamically controls expansion.."
   `(progn
-    (when *enabled*
+     (when *enabled*
       (format ,stream "~a" (make-color-string ,color
 					      :effect ,effect
 					      :style ,style)))
-    (unwind-protect
+     (unwind-protect
 	 (progn
 	   ,@body)
       (when *enabled*
 	(format ,stream "~a" +reset-color-string+)))))
+
+(defmacro gen-color-functions (color-names-vector)
+  `(progn
+     ,@(map 'list
+            (lambda (color)
+              `(defun ,(intern (symbol-name color)) (string &key
+                                                              (effect :unset)
+                                                              (style :foreground))
+                 ,(concatenate
+                   'string
+                   "Returns a string with the `" (string-downcase color)
+                   "'string denotation preppended and the `reset' string denotation appended.
+
+*enabled* dynamically controls the function." )
+                 (concatenate
+                  'string
+                  (when *enabled*
+                    (format nil "~a" (make-color-string ,color
+                                                        :effect effect
+                                                        :style style)))
+                  string
+                  (when *enabled*
+                    (format nil "~a" +reset-color-string+)))))
+            color-names-vector)))
+
+(gen-color-functions #.(coerce +term-colors+ 'list))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;  RGB color codes for some enhanced terminals
