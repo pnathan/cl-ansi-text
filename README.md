@@ -52,75 +52,75 @@ At any point, you can bind the `*enabled*` special variable to `nil`, and anythi
 # API
 
 
-BLUE
-===
+## BLUE
+
 Returns a string with the `blue'string denotation preppended and the `reset' string denotation appended.
 
 *enabled* dynamically controls the function.
 
-MAGENTA
-===
+## MAGENTA
+
 Returns a string with the `magenta'string denotation preppended and the `reset' string denotation appended.
 
 *enabled* dynamically controls the function.
 
-CYAN
-===
+## CYAN
+
 Returns a string with the `cyan'string denotation preppended and the `reset' string denotation appended.
 
 *enabled* dynamically controls the function.
 
-GREEN
-===
+## GREEN
+
 Returns a string with the `green'string denotation preppended and the `reset' string denotation appended.
 
 *enabled* dynamically controls the function.
 
-WITH-COLOR
-===
+## WITH-COLOR
+
 Writes out the string denoting a switch to `color`, executes body,
 then writes out the string denoting a `reset`.
 
 *enabled* dynamically controls expansion..
 
-YELLOW
-===
+## YELLOW
+
 Returns a string with the `yellow'string denotation preppended and the `reset' string denotation appended.
 
 *enabled* dynamically controls the function.
 
-BLACK
-===
+## BLACK
+
 Returns a string with the `black'string denotation preppended and the `reset' string denotation appended.
 
 *enabled* dynamically controls the function.
 
-*ENABLED*
-===
+## *ENABLED*
+
 Turns on/off the colorization of functions
 
-MAKE-COLOR-STRING
-===
+## MAKE-COLOR-STRING
+
 Takes either a cl-color or a list denoting the ANSI colors and
 returns a string sufficient to change to the given color.
 
 Will be dynamically controlled by *enabled* unless manually specified
 otherwise
 
-RED
-===
+## RED
+
 Returns a string with the `red'string denotation preppended and the `reset' string denotation appended.
 
 *enabled* dynamically controls the function.
 
-WHITE
-===
+## WHITE
+
 Returns a string with the `white'string denotation preppended and the `reset' string denotation appended.
 
 *enabled* dynamically controls the function.
 
-+RESET-COLOR-STRING+
-===
+## +RESET-COLOR-STRING+
+
 This string will reset ANSI colors
 
 
