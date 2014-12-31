@@ -1,3 +1,3 @@
 #!/bin/bash
 echo "CI run using SBCL"
-sbcl --script travis-tests.lisp
+sbcl --script run-tests.lisp
