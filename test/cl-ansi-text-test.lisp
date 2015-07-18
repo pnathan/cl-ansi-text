@@ -120,6 +120,4 @@
         t)))
 
 (defun ci-run ()
-  (if (run-tests)
-      (cl-user::exit :code 0)
-      (cl-user::exit :code 1)))
+  (run-tests))

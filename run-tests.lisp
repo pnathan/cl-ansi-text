@@ -1,14 +1,16 @@
-#!/usr/local/bin/sbcl
-
-(require "sb-posix")
-
 #-quicklisp
 (let ((quicklisp-init (merge-pathnames "quicklisp/setup.lisp"
                                        (user-homedir-pathname))))
   (when (probe-file quicklisp-init)
     (load quicklisp-init)))
 
-(defparameter *pwd* (concatenate 'string (sb-posix:getcwd) "/"))
+#+sbcl(require "sb-posix")
+
+(defparameter *pwd*
+  (concatenate 'string
+               (progn #+sbcl(sb-posix:getcwd)
+                      #+ccl(ccl::current-directory-name))
+               "/"))
 
 (push *pwd* asdf:*central-registry*)
 
@@ -21,4 +23,7 @@
                 :cl-ansi-text-test))
 
 (let ((result-status (cl-ansi-text-test::ci-run)))
-  (sb-posix:exit (if result-status 0 1)))
+  (let ((posix-status
+          (if result-status 0 1)))
+    #+sbcl(sb-posix:exit posix-status)
+    #+ccl (quit posix-status)))

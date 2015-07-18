@@ -4,5 +4,9 @@ before_script:
         - pushd sbcl-1.2.6-x86-64-linux/ && sudo bash install.sh && popd
         - curl -O -L http://beta.quicklisp.org/quicklisp.lisp
         - sbcl --load quicklisp.lisp --eval '(quicklisp-quickstart:install)' --eval '(quit)'
+        - curl -OL http://ccl.clozure.com/ftp/pub/release/1.10/ccl-1.10-linuxx86.tar.gz
+        - tar xzf ccl-1.10-linuxx86.tar.gz
+        - export PATH=`pwd`/ccl:$PATH
+        - lx86cl64 -b --load quicklisp.lisp --eval '(progn (quicklisp-quickstart:install) (quit))'- export PATH=ccl:$PATH
 script:
         - ./ci-test-run.sh
