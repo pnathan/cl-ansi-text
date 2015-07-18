@@ -7,6 +7,7 @@ before_script:
         - curl -OL http://ccl.clozure.com/ftp/pub/release/1.10/ccl-1.10-linuxx86.tar.gz
         - tar xzf ccl-1.10-linuxx86.tar.gz
         - export PATH=`pwd`/ccl:$PATH
-        - lx86cl64 -b --load quicklisp.lisp --eval '(progn (quicklisp-quickstart:install) (quit))'- export PATH=ccl:$PATH
+        - lx86cl64 -b --load quicklisp.lisp --eval '(progn (quicklisp-quickstart:install) (quit))'
+
 script:
         - ./ci-test-run.sh
