@@ -33,7 +33,7 @@
 ;;;
 ;;; At least from the thread "Compiler problem, MCL 3.9" by Arthur
 ;;; Cater around '96.
-#+ccl(common-lisp:eval-when (:compile-toplevel)
+#+ccl(common-lisp:eval-when (:compile-toplevel :load-toplevel :execute)
        (defmethod make-load-form ((obj cl-colors:rgb )  &optional env)
 	 (make-load-form-saving-slots obj)))
 
