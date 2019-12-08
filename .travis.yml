@@ -1,13 +1,41 @@
-before_script:
-        - curl -O -L http://prdownloads.sourceforge.net/sbcl/sbcl-1.2.6-x86-64-linux-binary.tar.bz2
-        - tar xjf sbcl-1.2.6-x86-64-linux-binary.tar.bz2
-        - pushd sbcl-1.2.6-x86-64-linux/ && sudo bash install.sh && popd
-        - curl -O -L http://beta.quicklisp.org/quicklisp.lisp
-        - sbcl --load quicklisp.lisp --eval '(quicklisp-quickstart:install)' --eval '(quit)'
-        - curl -OL http://ccl.clozure.com/ftp/pub/release/1.10/ccl-1.10-linuxx86.tar.gz
-        - tar xzf ccl-1.10-linuxx86.tar.gz
-        - export PATH=`pwd`/ccl:$PATH
-#        - lx86cl64 -b --load quicklisp.lisp --eval '(progn (quicklisp-quickstart:install) (quit))'
+language: common-lisp
+sudo: false
+
+addons:
+  apt:
+    packages:
+      - libc6-i386
+      - clisp
+      - openjdk-7-jre
+
+env:
+  global:
+    - PATH=~/.roswell/bin:$PATH
+    - ROSWELL_INSTALL_DIR=$HOME/.roswell
+  matrix:
+    - LISP=sbcl-bin
+    - LISP=ccl-bin
+    - LISP=abcl
+    - LISP=clisp
+    - LISP=ecl
+    - LISP=cmucl
+    - LISP=alisp
+
+matrix:
+  allow_failures:
+    - env: LISP=clisp
+    - env: LISP=abcl
+    - env: LISP=ecl
+    - env: LISP=cmucl
+    - env: LISP=alisp
+
+install:
+  - curl -L https://raw.githubusercontent.com/snmsts/roswell/release/scripts/install-for-ci.sh | sh
+
+cache:
+  directories:
+    - $HOME/.roswell
+    - $HOME/.config/common-lisp
 
 script:
-        - ./ci-test-run.sh
+  - ./testscr.ros

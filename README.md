@@ -123,6 +123,10 @@ Returns a string with the `white'string denotation preppended and the `reset' st
 
 This string will reset ANSI colors
 
+# Running test
+
+Run `./testscr.ros` with Roswell. You can also manually run the test with
+`(ql:quickload :cl-ansi-text.test) (fiveam:run! :cl-ansi-text)`.
 
 # Note
 

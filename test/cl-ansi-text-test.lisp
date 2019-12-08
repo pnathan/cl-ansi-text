@@ -8,13 +8,10 @@
         :fiveam))
 
 (in-package :cl-ansi-text-test)
-(use-package :fiveam)
-(use-package :cl-ansi-text)
 
-(def-suite test-suite
-    :description "test suite.")
+(def-suite :cl-ansi-text :description "test suite.")
 
-(in-suite test-suite)
+(in-suite :cl-ansi-text)
 
 
 (test basic-color-strings
@@ -108,16 +105,3 @@
      (equal str
             (white (cyan (magenta (blue (yellow (green (red (black str))))))))))))
 
-(defun run-tests ()
-  (let  ((results (run 'test-suite)))
-    (explain! results)
-    (if (position-if #'(lambda (e)
-                         (eq (type-of e)
-                             'IT.BESE.FIVEAM::TEST-FAILURE
-                             ))
-                     results)
-        nil
-        t)))
-
-(defun ci-run ()
-  (run-tests))
