@@ -1,6 +1,7 @@
 (asdf:defsystem #:cl-ansi-text
   :depends-on ( #:cl-colors2 #:alexandria)
   :serial t
+  :pathname "src/"
   :components ((:file "cl-ansi-text")
                (:file "define-colors"))
   :name "cl-ansi-text"
