@@ -1,5 +1,5 @@
 (asdf:defsystem #:cl-ansi-text
-  :depends-on ( #:cl-colors #:alexandria)
+  :depends-on ( #:cl-colors2 #:alexandria)
   :components ((:file "cl-ansi-text"))
   :name "cl-ansi-text"
   :version "1.0"

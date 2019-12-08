@@ -1,5 +1,5 @@
 (asdf:defsystem #:cl-ansi-text.test
-  :depends-on ( #:cl-colors #:alexandria #:cl-ansi-text #:fiveam)
+  :depends-on ( #:cl-colors2 #:alexandria #:cl-ansi-text #:fiveam)
   :components ((:module "test"
                 :components
                 ((:file "cl-ansi-text-test"))))
