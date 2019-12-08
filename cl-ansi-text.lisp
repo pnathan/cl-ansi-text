@@ -25,18 +25,6 @@
    #:white))
 (in-package :cl-ansi-text)
 
-;;; !!! NOTE TO CCL USERS !!!
-;;;
-;;; This seems to be *required* to make this compile in CCL. The
-;;; reason is that CCL expects to be able to inline on compile, but
-;;; structs don't set up that infrastructure by default.
-;;;
-;;; At least from the thread "Compiler problem, MCL 3.9" by Arthur
-;;; Cater around '96.
-#+ccl(common-lisp:eval-when (:compile-toplevel :load-toplevel :execute)
-       (defmethod make-load-form ((obj cl-colors:rgb )  &optional env)
-	 (make-load-form-saving-slots obj)))
-
 (defparameter *enabled* t
   "Turns on/off the colorization of functions")
 
