@@ -268,7 +268,7 @@ extensions to xterm"))
 
   (unless (and (integerp (first color))
                (integerp (second color))
-               (integerp (second color)))
+               (integerp (third color)))
     (error "~a must have three integers" color))
 
   (code-from-rgb style
