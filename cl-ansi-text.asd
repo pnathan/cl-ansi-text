@@ -1,6 +1,8 @@
 (asdf:defsystem #:cl-ansi-text
   :depends-on ( #:cl-colors2 #:alexandria)
-  :components ((:file "cl-ansi-text"))
+  :serial t
+  :components ((:file "cl-ansi-text")
+               (:file "define-colors"))
   :name "cl-ansi-text"
   :version "1.0"
   :maintainer "Paul Nathan"
