@@ -33,7 +33,7 @@
   "Turns on/off the colorization of functions")
 
 (declaim (type (member :3bit :8bit :24bit) *color-mode*))
-(defvar *color-mode* :3bit
+(defvar *color-mode* :24bit
   "Changes the mode used to encode the color")
 
 (defvar +reset-color-string+
