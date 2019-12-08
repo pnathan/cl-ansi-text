@@ -18,34 +18,47 @@
 
 (test basic-color-strings
   "Test the basic stuff"
-  (is (equal '(#\Esc #\[ #\3 #\1 #\m)
-             (make-color-string-as-list :red :effect :unset :style :foreground)))
-  (is (equal '(#\Esc #\[ #\4 #\1 #\m)
-             (make-color-string-as-list :red :effect :unset :style :background)))
-  (is (equal '(#\Esc #\[ #\4 #\2 #\; #\1 #\m)
-             (make-color-string-as-list :green :effect :bright :style :background))))
+  (let ((*color-mode* :3bit))
+    (is (equal '(#\Esc #\[ #\3 #\1 #\m)
+               (make-color-string-as-list :red :effect :unset :style :foreground)))
+    (is (equal '(#\Esc #\[ #\4 #\1 #\m)
+               (make-color-string-as-list :red :effect :unset :style :background)))
+    (is (equal '(#\Esc #\[ #\4 #\2 #\; #\1 #\m)
+               (make-color-string-as-list :green :effect :bright :style :background)))))
 
 (test enabled-connectivity
   "Test *enabled*'s capability"
- (is (equal  '(#\Esc #\[ #\3 #\1 #\m)
-             (let ((*enabled* t))
-               (make-color-string-as-list :red))))
- (is (equal  '()
-            (let ((*enabled* nil))
-              (make-color-string-as-list :red))))
- (is (equal "hi"
-            (let ((*enabled* nil))
-              (with-output-to-string (s)
-                (with-color (:red :stream s) (format s "hi"))))))
- (is (equal '(#\Esc #\[ #\3 #\1 #\m #\T #\e #\s #\t #\! #\Esc #\[ #\0 #\m)
-            (concatenate
-             'list
-             (with-output-to-string (s)
-               (with-color (:red :stream s)
-                 (format s "Test!")))))))
+  (let ((*color-mode* :3bit))
+    (is (equal  '(#\Esc #\[ #\3 #\1 #\m)
+                (let ((*enabled* t))
+                  (make-color-string-as-list :red))))
+    (is (equal  '()
+                (let ((*enabled* nil))
+                  (make-color-string-as-list :red))))
+    (is (equal "hi"
+               (let ((*enabled* nil))
+                 (with-output-to-string (s)
+                   (with-color (:red :stream s) (format s "hi"))))))
+    (is (equal '(#\Esc #\[ #\3 #\1 #\m #\T #\e #\s #\t #\! #\Esc #\[ #\0 #\m)
+               (concatenate
+                'list
+                (with-output-to-string (s)
+                  (with-color (:red :stream s)
+                    (format s "Test!"))))))))
 
 (test rgb-suite
   "Test RGB colors"
+  (let ((*color-mode* :3bit))
+    (is (equal '(#\Esc #\[ #\3 #\1 #\m)
+               (make-color-string-as-list #xFF0000 :effect :unset :style :foreground)))
+    (is (equal '(#\Esc #\[ #\4 #\2 #\m)
+               (make-color-string-as-list #x00FF00 :effect :unset :style :background)))
+    (is (equal '(#\Esc #\[ #\4 #\4 #\m)
+               (make-color-string-as-list #x0000FF :effect :unset :style :background)))
+    (is (equal '(#\Esc #\[ #\4 #\0 #\m)
+               (make-color-string-as-list #x000000 :effect :unset :style :background)))
+    (is (equal '(#\Esc #\[ #\4 #\7 #\m)
+               (make-color-string-as-list #xFFFFFF :effect :unset :style :background))))
   (let ((*color-mode* :8bit))
     (is (equal '(#\Esc #\[ #\3 #\8 #\; #\5 #\; #\2 #\1 #\4 #\m)
                (make-color-string-as-list #xFFAA00 :effect :unset :style :foreground)))
@@ -54,6 +67,15 @@
     (is (equal '(#\Esc #\[ #\4 #\8 #\; #\5 #\; #\1 #\6 #\m)
                (make-color-string-as-list #x000000 :effect :unset :style :background)))
     (is (equal '(#\Esc #\[ #\4 #\8 #\; #\5 #\; #\2 #\3 #\1 #\m)
+               (make-color-string-as-list #xFFFFFF :effect :unset :style :background))))
+  (let ((*color-mode* :24bit))
+    (is (equal '(#\Esc #\[ #\3 #\8 #\; #\2 #\; #\2 #\5 #\5 #\; #\1 #\7 #\0 #\; #\0 #\m)
+               (make-color-string-as-list #xFFAA00 :effect :unset :style :foreground)))
+    (is (equal '(#\Esc #\[ #\4 #\8 #\; #\2 #\; #\2 #\5 #\5 #\; #\1 #\7 #\0 #\; #\0 #\m)
+               (make-color-string-as-list #xFFAA00 :effect :unset :style :background)))
+    (is (equal '(#\Esc #\[ #\4 #\8 #\; #\2 #\; #\0 #\; #\0 #\; #\0 #\m)
+               (make-color-string-as-list #x000000 :effect :unset :style :background)))
+    (is (equal '(#\Esc #\[ #\4 #\8 #\; #\2 #\; #\2 #\5 #\5 #\; #\2 #\5 #\5 #\; #\2 #\5 #\5 #\m)
                (make-color-string-as-list #xFFFFFF :effect :unset :style :background)))))
 
 (test color-named-functions
