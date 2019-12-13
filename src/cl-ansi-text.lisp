@@ -11,6 +11,7 @@
 (defpackage :cl-ansi-text
   (:use :common-lisp)
   (:export
+   #:color-specifier
    #:with-color
    #:make-color-string
    #:+reset-color-string+
@@ -23,7 +24,8 @@
    #:magenta
    #:cyan
    #:white
-   #:*color-mode*))
+   #:*color-mode*
+   #:color-string))
 (in-package :cl-ansi-text)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -86,6 +88,33 @@
     (:not-overlined . 55))
   "ANSI terminal effects")
 
+(defun color-string-p (string)
+  (every (lambda (c)
+           (member c '(#\# #\0 #\1 #\2 #\3 #\4 #\5 #\6 #\7 #\8 #\9
+                       #\a #\b #\c #\d #\e #\f #\A #\B #\C #\D #\E #\F)))
+         string))
+
+(deftype color-specifier ()
+  `(or unsigned-byte
+       (cons (real 0 256)
+             (cons (real 0 256)
+                   (cons (real 0 256)
+                         nil)))
+       cl-colors:rgb
+       cl-colors:hsv
+       term-colors
+       color-string))
+
+(deftype color-string ()
+  `(and (or (string 3)
+            (string 4)
+            (string 6)
+            (string 7))
+        (satisfies color-string-p)))
+
+(deftype term-colors ()
+  `(member :black :red :green :yellow :blue :magenta :cyan :white))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun find-effect-code (effect)
@@ -110,6 +139,7 @@ returns a string sufficient to change to the given color.
 
 Will be dynamically controlled by *enabled* unless manually specified
 otherwise"
+  (declare (type color-specifier color))
   (when *enabled*
     (let ((effect-code (find-effect-code effect)))
       ;; Nil here indicates an error
