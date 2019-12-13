@@ -32,15 +32,21 @@
 ;; constants
 
 (defvar *enabled* t
-  "Turns on/off the colorization of functions")
+  "Turns on/off the colorization.")
 
 (declaim (type (member :3bit :8bit :24bit) *color-mode*))
 (defvar *color-mode* :24bit
-  "Changes the mode used to encode the color")
+  "Controls the way `make-color-string` emits the color code.
+
+It should be one of the following keyword symbols: `:3bit`, `:8bit`, `:24bit`.
+The specified color is converted to the nearest color in the color space.
+
+Note that the actual appearance of the screen in the `:3bit` mode may be affected by
+the terminal setting -- For example, many terminals do not use `FF0000` for the red.")
 
 (defvar +reset-color-string+
   (concatenate 'string (list (code-char 27) #\[ #\0 #\m))
-  "This string will reset ANSI colors")
+  "A constant string that resets the color state of the terminal.")
 
 (defvar +cl-colors-basic-colors+
   (vector
@@ -134,11 +140,9 @@ effect should be a member of +term-effects+"
 				  (effect :unset)
 				  (style :foreground)
 				  ((enabled *enabled*) *enabled*))
-  "Takes either a cl-color or a list denoting the ANSI colors and
-returns a string sufficient to change to the given color.
+  "Takes an object of `color-specifier` and returns a string sufficient to change to the given color.
 
-Will be dynamically controlled by *enabled* unless manually specified
-otherwise"
+Colorization is controlled by *enabled* unless manually specified otherwise by `:enabled` keyword."
   (declare (type color-specifier color))
   (when *enabled*
     (let ((effect-code (find-effect-code effect)))
@@ -159,10 +163,9 @@ otherwise"
 			      (effect :unset)
 			      (style :foreground))
 		      &body body)
-  "Writes out the string denoting a switch to `color`, executes body,
-then writes out the string denoting a `reset`.
-
-*enabled* dynamically controls expansion.."
+  "Writes out the ANSI escape code string 
+denoting `effect`, `style`, and a switch to `color`, then executes `body`,
+then writes out the string that resets the decoration."
   `(progn
      (when *enabled*
       (format ,stream "~a" (make-color-string ,color
