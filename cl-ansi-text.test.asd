@@ -4,7 +4,7 @@
                 :components
                 ((:file "cl-ansi-text-test"))))
   :name "cl-ansi-text-test"
-  :version "1.0"
+  :version "1.1"
   :maintainer "Paul Nathan"
   :author "Paul Nathan"
   :licence "LLGPL"
