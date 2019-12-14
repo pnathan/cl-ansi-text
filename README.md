@@ -22,7 +22,7 @@ Basic 8 colors in the 3-bit color mode are supported, which are `:black`, `:red`
 ; Gets printed red...and this too!
 ; => "and this too!"
 ```
-### `CL-COLORS2:RGB` and `CL-COLORS2:HSV` object
+### `CL-COLORS:RGB` and `CL-COLORS:HSV` object
 
 These are color structures from `CL-COLORS2` (a maintained fork of `CL-COLORS`).
 `CL-COLORS2` has several constants e.g. `cl-colors:+red+` that holds the corresponding color values.
