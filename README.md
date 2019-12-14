@@ -149,14 +149,15 @@ Run `./testscr.ros` with Roswell. You can also manually run the test with
 # Note
 
 Note that your terminal MUST be ANSI-compliant to show these
-colors. My SLIME REPL (as of Feb 2013) does not display these
-colors. I have to use a typical Linux/OSX terminal to see them.
+colors. 
 
-This has been tested to work on a Linux system with SBCL, CLISP and
-CCL. CCL may not work quite perfectly, some level of conniptions were
-encountered in testing. The interested reader is advised to check the
-MAKE-LOAD-FORM defmethod in cl-ansi-text.lisp.
+SLIME REPL does not display these colors by default (2019.12.13).
+To make it understand the ANSI escape sequence,
+install `slime-repl-ansi-color` package available from [MELPA](https://melpa.org/)
+using `package-install` and insert `(require 'slime-repl-ansi-color)` in `.emacs`.
 
-An earlier variant was tested on OSX 10.6 with SBCL.
+You can view the list of lisp implementation this library is tested
+on [Travis-CI](https://travis-ci.org/pnathan/cl-ansi-text).
+The testing environment is Linux, but we believe this should work also on OSX.
 
 License: LLGPL
