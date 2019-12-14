@@ -154,7 +154,13 @@ colors.
 SLIME REPL does not display these colors by default (2019.12.13).
 To make it understand the ANSI escape sequence,
 install `slime-repl-ansi-color` package available from [MELPA](https://melpa.org/)
-using `package-install` and insert `(require 'slime-repl-ansi-color)` in `.emacs`.
+using `package-install` and add the following in `.emacs`:
+
+``` lisp
+(with-eval-after-load 'slime-repl
+  (require 'slime-repl-ansi-color))
+(add-hook 'slime-repl-mode-hook 'slime-repl-ansi-color-mode)
+```
 
 You can view the list of lisp implementation this library is tested
 on [Travis-CI](https://travis-ci.org/pnathan/cl-ansi-text).
