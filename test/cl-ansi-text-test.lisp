@@ -8,61 +8,75 @@
         :fiveam))
 
 (in-package :cl-ansi-text-test)
-(use-package :fiveam)
-(use-package :cl-ansi-text)
 
-(def-suite test-suite
-    :description "test suite.")
+(def-suite :cl-ansi-text :description "test suite.")
 
-(in-suite test-suite)
+(in-suite :cl-ansi-text)
 
+(defun make-color-string-as-list (&rest args)
+  (coerce (apply #'cl-ansi-text:make-color-string args) 'list))
 
 (test basic-color-strings
   "Test the basic stuff"
-  (is (equal '(#\Esc #\[ #\3 #\1 #\m)
-             (cl-ansi-text::build-control-string :red :unset :foreground)))
-  (is (equal '(#\Esc #\[ #\4 #\1 #\m)
-             (cl-ansi-text::build-control-string :red :unset :background)))
-  (is (equal '(#\Esc #\[ #\4 #\2 #\; #\1 #\m)
-             (cl-ansi-text::build-control-string :green :bright :background))))
+  (let ((*color-mode* :3bit))
+    (is (equal '(#\Esc #\[ #\3 #\1 #\m)
+               (make-color-string-as-list :red :effect :unset :style :foreground)))
+    (is (equal '(#\Esc #\[ #\4 #\1 #\m)
+               (make-color-string-as-list :red :effect :unset :style :background)))
+    (is (equal '(#\Esc #\[ #\4 #\2 #\; #\1 #\m)
+               (make-color-string-as-list :green :effect :bright :style :background)))))
 
 (test enabled-connectivity
   "Test *enabled*'s capability"
- (is (equal  '(#\Esc #\[ #\3 #\1 #\m)
-             (let ((*enabled* t))
+  (let ((*color-mode* :3bit))
+    (is (equal  '(#\Esc #\[ #\3 #\1 #\m)
+                (let ((*enabled* t))
+                  (make-color-string-as-list :red))))
+    (is (equal  '()
+                (let ((*enabled* nil))
+                  (make-color-string-as-list :red))))
+    (is (equal "hi"
+               (let ((*enabled* nil))
+                 (with-output-to-string (s)
+                   (with-color (:red :stream s) (format s "hi"))))))
+    (is (equal '(#\Esc #\[ #\3 #\1 #\m #\T #\e #\s #\t #\! #\Esc #\[ #\0 #\m)
                (concatenate
                 'list
-                (cl-ansi-text:make-color-string :red)))))
- (is (equal  '()
-            (let ((*enabled* nil))
-              (concatenate
-               'list
-               (cl-ansi-text:make-color-string :red)))))
- (is (equal "hi"
-            (let ((*enabled* nil))
-              (with-output-to-string (s)
-                (with-color (:red :stream s) (format s "hi"))))))
- (is (equal '(#\Esc #\[ #\3 #\1 #\m #\T #\e #\s #\t #\! #\Esc #\[ #\0 #\m)
-            (concatenate
-             'list
-             (with-output-to-string (s)
-               (with-color (:red :stream s)
-                 (format s "Test!")))))))
+                (with-output-to-string (s)
+                  (with-color (:red :stream s)
+                    (format s "Test!"))))))))
 
 (test rgb-suite
   "Test RGB colors"
-  (is (equal '(#\Esc #\[ #\3 #\8 #\; #\5 #\; #\2 #\1 #\4 #\m)
-             (cl-ansi-text::build-control-string #xFFAA00
-                                                 :unset :foreground)))
-  (is (equal '(#\Esc #\[ #\4 #\8 #\; #\5 #\; #\2 #\1 #\4 #\m)
-             (cl-ansi-text::build-control-string #xFFAA00
-                                                 :unset :background)))
-  (is (equal '(#\Esc #\[ #\4 #\8 #\; #\5 #\; #\1 #\6 #\m)
-             (cl-ansi-text::build-control-string #x000000
-                                                 :unset :background)))
-  (is (equal '(#\Esc #\[ #\4 #\8 #\; #\5 #\; #\2 #\3 #\1 #\m)
-             (cl-ansi-text::build-control-string #xFFFFFF
-                                                 :unset :background))))
+  (let ((*color-mode* :3bit))
+    (is (equal '(#\Esc #\[ #\3 #\1 #\m)
+               (make-color-string-as-list #xFF0000 :effect :unset :style :foreground)))
+    (is (equal '(#\Esc #\[ #\4 #\2 #\m)
+               (make-color-string-as-list #x00FF00 :effect :unset :style :background)))
+    (is (equal '(#\Esc #\[ #\4 #\4 #\m)
+               (make-color-string-as-list #x0000FF :effect :unset :style :background)))
+    (is (equal '(#\Esc #\[ #\4 #\0 #\m)
+               (make-color-string-as-list #x000000 :effect :unset :style :background)))
+    (is (equal '(#\Esc #\[ #\4 #\7 #\m)
+               (make-color-string-as-list #xFFFFFF :effect :unset :style :background))))
+  (let ((*color-mode* :8bit))
+    (is (equal '(#\Esc #\[ #\3 #\8 #\; #\5 #\; #\2 #\1 #\4 #\m)
+               (make-color-string-as-list #xFFAA00 :effect :unset :style :foreground)))
+    (is (equal '(#\Esc #\[ #\4 #\8 #\; #\5 #\; #\2 #\1 #\4 #\m)
+               (make-color-string-as-list #xFFAA00 :effect :unset :style :background)))
+    (is (equal '(#\Esc #\[ #\4 #\8 #\; #\5 #\; #\1 #\6 #\m)
+               (make-color-string-as-list #x000000 :effect :unset :style :background)))
+    (is (equal '(#\Esc #\[ #\4 #\8 #\; #\5 #\; #\2 #\3 #\1 #\m)
+               (make-color-string-as-list #xFFFFFF :effect :unset :style :background))))
+  (let ((*color-mode* :24bit))
+    (is (equal '(#\Esc #\[ #\3 #\8 #\; #\2 #\; #\2 #\5 #\5 #\; #\1 #\7 #\0 #\; #\0 #\m)
+               (make-color-string-as-list #xFFAA00 :effect :unset :style :foreground)))
+    (is (equal '(#\Esc #\[ #\4 #\8 #\; #\2 #\; #\2 #\5 #\5 #\; #\1 #\7 #\0 #\; #\0 #\m)
+               (make-color-string-as-list #xFFAA00 :effect :unset :style :background)))
+    (is (equal '(#\Esc #\[ #\4 #\8 #\; #\2 #\; #\0 #\; #\0 #\; #\0 #\m)
+               (make-color-string-as-list #x000000 :effect :unset :style :background)))
+    (is (equal '(#\Esc #\[ #\4 #\8 #\; #\2 #\; #\2 #\5 #\5 #\; #\2 #\5 #\5 #\; #\2 #\5 #\5 #\m)
+               (make-color-string-as-list #xFFFFFF :effect :unset :style :background)))))
 
 (test color-named-functions
   (let ((str "Test string."))
@@ -108,16 +122,3 @@
      (equal str
             (white (cyan (magenta (blue (yellow (green (red (black str))))))))))))
 
-(defun run-tests ()
-  (let  ((results (run 'test-suite)))
-    (explain! results)
-    (if (position-if #'(lambda (e)
-                         (eq (type-of e)
-                             'IT.BESE.FIVEAM::TEST-FAILURE
-                             ))
-                     results)
-        nil
-        t)))
-
-(defun ci-run ()
-  (run-tests))

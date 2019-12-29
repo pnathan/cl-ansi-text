@@ -1,0 +1,18 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+
+(ql:quickload :fiveam)
+
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (uiop:quit (if (handler-case
+                     (progn
+                       (ql:quickload :cl-ansi-text.test)
+                       (5am:run! :cl-ansi-text))
+                   (serious-condition (c)
+                     (describe c)
+                     (uiop:quit 2)))
+                 0 1)))
