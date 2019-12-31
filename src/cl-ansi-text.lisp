@@ -35,7 +35,7 @@
   "Turns on/off the colorization.")
 
 (declaim (type (member :3bit :8bit :24bit) *color-mode*))
-(defvar *color-mode* :8bit
+(defvar *color-mode* :3bit
   "Controls the way `make-color-string` emits the color code.
 
 It should be one of the following keyword symbols: `:3bit`, `:8bit`, `:24bit`.
