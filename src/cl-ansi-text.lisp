@@ -50,15 +50,15 @@ the terminal setting -- For example, many terminals do not use `FF0000` for the 
 
 (defvar +cl-colors-basic-colors+
   (vector
-   cl-colors:+black+
-   cl-colors:+red+
-   cl-colors:+green+
-   cl-colors:+yellow+
-   cl-colors:+blue+
-   cl-colors:+magenta+
-   cl-colors:+cyan+
-   cl-colors:+white+)
-  "CL-COLORS basic colors")
+   cl-colors2:+black+
+   cl-colors2:+red+
+   cl-colors2:+green+
+   cl-colors2:+yellow+
+   cl-colors2:+blue+
+   cl-colors2:+magenta+
+   cl-colors2:+cyan+
+   cl-colors2:+white+)
+  "CL-COLORS2 basic colors")
 
 (defvar +term-colors+
   (vector
@@ -106,8 +106,8 @@ the terminal setting -- For example, many terminals do not use `FF0000` for the 
              (cons (real 0 256)
                    (cons (real 0 256)
                          nil)))
-       cl-colors:rgb
-       cl-colors:hsv
+       cl-colors2:rgb
+       cl-colors2:hsv
        term-colors
        color-string))
 
@@ -163,7 +163,7 @@ Colorization is controlled by *enabled* unless manually specified otherwise by `
 			      (effect :unset)
 			      (style :foreground))
 		      &body body)
-  "Writes out the ANSI escape code string 
+  "Writes out the ANSI escape code string
 denoting `effect`, `style`, and a switch to `color`, then executes `body`,
 then writes out the string that resets the decoration."
   `(progn
@@ -189,12 +189,12 @@ then writes out the string that resets the decoration."
                (every #'realp color)
                (every (lambda (x) (<= 0 x 256)) color))
           nil "~a must be a list of numbers in [0,256]" color)
-  (rgb-color-code (apply #'cl-colors:rgb (mapcar (lambda (x) (/ x 256)) color))
+  (rgb-color-code (apply #'cl-colors2:rgb (mapcar (lambda (x) (/ x 256)) color))
                   style))
 
 (defmethod rgb-color-code ((color integer) &optional (style :foreground))
   "Takes RGB integer ala Web integers"
-  (rgb-color-code (cl-colors:rgb 
+  (rgb-color-code (cl-colors2:rgb
                    ;; classic bitmask
                    (/ (ash  (logand color #xff0000) -16) 256)
                    (/ (ash  (logand color #x00ff00) -8) 256)
@@ -203,14 +203,14 @@ then writes out the string that resets the decoration."
 
 (defmethod rgb-color-code ((color string) &optional (style :foreground))
   "Takes RGB integer ala Web integers"
-  (rgb-color-code (cl-colors:hex-to-rgb color)
+  (rgb-color-code (cl-colors2:hex-to-rgb color)
                   style))
 
-(defmethod rgb-color-code ((color cl-colors:rgb) &optional (style :foreground))
+(defmethod rgb-color-code ((color cl-colors2:rgb) &optional (style :foreground))
   (code-from-rgb color style))
 
-(defmethod rgb-color-code ((color cl-colors:hsv) &optional (style :foreground))
-  (code-from-rgb (cl-colors:hsv-to-rgb color) style))
+(defmethod rgb-color-code ((color cl-colors2:hsv) &optional (style :foreground))
+  (code-from-rgb (cl-colors2:hsv-to-rgb color) style))
 
 (defmethod rgb-color-code ((color symbol) &optional (style :foreground))
   (code-from-rgb (aref +cl-colors-basic-colors+ (position color +term-colors+)) style))
@@ -228,18 +228,18 @@ then writes out the string that resets the decoration."
     (:24bit
      (list (+ (find-style-code style) 8)
            2
-           (ceiling (* 255 (cl-colors:rgb-red color)))
-           (ceiling (* 255 (cl-colors:rgb-green color)))
-           (ceiling (* 255 (cl-colors:rgb-blue color)))))))
+           (ceiling (* 255 (cl-colors2:rgb-red color)))
+           (ceiling (* 255 (cl-colors2:rgb-green color)))
+           (ceiling (* 255 (cl-colors2:rgb-blue color)))))))
 
 (defun rgb-to-ansi-3bit (color)
   "find the closest color from +cl-colors-basic-colors+"
   (labels ((square (x)
              (* x x))
            (distance (color2)
-             (+ (square (- (cl-colors:rgb-red   color) (cl-colors:rgb-red   color2)))
-                (square (- (cl-colors:rgb-green color) (cl-colors:rgb-green color2)))
-                (square (- (cl-colors:rgb-blue  color) (cl-colors:rgb-blue  color2))))))
+             (+ (square (- (cl-colors2:rgb-red   color) (cl-colors2:rgb-red   color2)))
+                (square (- (cl-colors2:rgb-green color) (cl-colors2:rgb-green color2)))
+                (square (- (cl-colors2:rgb-blue  color) (cl-colors2:rgb-blue  color2))))))
     (position (reduce (lambda (a b)
                         (if (< (distance a) (distance b))
                             a b))
@@ -249,6 +249,6 @@ then writes out the string that resets the decoration."
 (defun rgb-to-ansi-8bit (color)
   "http://www.frexx.de/xterm-256-notes/"
   (+ 16
-     (* 36 (min 5 (floor (* 6 (cl-colors:rgb-red   color)))))
-     (* 6  (min 5 (floor (* 6 (cl-colors:rgb-green color)))))
-     (* 1  (min 5 (floor (* 6 (cl-colors:rgb-blue  color)))))))
+     (* 36 (min 5 (floor (* 6 (cl-colors2:rgb-red   color)))))
+     (* 6  (min 5 (floor (* 6 (cl-colors2:rgb-green color)))))
+     (* 1  (min 5 (floor (* 6 (cl-colors2:rgb-blue  color)))))))
