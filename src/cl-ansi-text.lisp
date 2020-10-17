@@ -139,7 +139,7 @@ effect should be a member of +term-effects+"
 (defun make-color-string (color &key
 				  (effect :unset)
 				  (style :foreground)
-				  ((enabled *enabled*) *enabled*))
+				  ((:enabled *enabled*) *enabled*))
   "Takes an object of `color-specifier` and returns a string sufficient to change to the given color.
 
 Colorization is controlled by *enabled* unless manually specified otherwise by `:enabled` keyword."
