@@ -1,7 +1,7 @@
 # cl-ansi-text
 
 Because color in your terminal is nice.
-[![Build Status](https://travis-ci.org/pnathan/cl-ansi-text.svg?branch=master)](https://travis-ci.org/pnathan/cl-ansi-text)
+![CI](https://github.com/pnathan/cl-ansi-text/workflows/CI/badge.svg?branch=master)
 
 Installation: `(ql:quickload :cl-ansi-text)`
 
@@ -102,7 +102,7 @@ the rest consists of 3 or 6 hexademical alphadigits (case-insensitive).
 with-color (color &key (stream t) (effect :unset) (style :foreground)) &body body
 ```
 
-Writes out the ANSI escape code string 
+Writes out the ANSI escape code string
 denoting `effect`, `style`, and a switch to `color`, then executes `body`,
 then writes out the string that resets the decoration.
 
@@ -146,10 +146,18 @@ A constant string that resets the color state of the terminal.
 Run `./testscr.ros` with Roswell. You can also manually run the test with
 `(ql:quickload :cl-ansi-text.test) (fiveam:run! :cl-ansi-text)`.
 
+
+## CI tests
+
+You can view the list of lisp implementation this library is tested on
+the Github Action tab. The testing environment is Linux, but we
+believe this should work also on OSX.
+
+
 # Note
 
 Note that your terminal MUST be ANSI-compliant to show these
-colors. 
+colors.
 
 SLIME REPL does not display these colors by default (2019.12.13).
 To make it understand the ANSI escape sequence,
@@ -162,8 +170,5 @@ using `package-install` and add the following in `.emacs`:
 (add-hook 'slime-repl-mode-hook 'slime-repl-ansi-color-mode)
 ```
 
-You can view the list of lisp implementation this library is tested
-on [Travis-CI](https://travis-ci.org/pnathan/cl-ansi-text).
-The testing environment is Linux, but we believe this should work also on OSX.
 
 License: LLGPL
