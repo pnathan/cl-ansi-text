@@ -35,6 +35,10 @@
     (is (equal  '()
                 (let ((*enabled* nil))
                   (make-color-string-as-list :red))))
+    (is (equal '(#\Esc #\[ #\3 #\1 #\m)
+               (make-color-string-as-list :red :enabled t)))
+    (is (equal '()
+               (make-color-string-as-list :red :enabled nil)))
     (is (equal "hi"
                (let ((*enabled* nil))
                  (with-output-to-string (s)
