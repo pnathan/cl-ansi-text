@@ -82,6 +82,20 @@
     (is (equal '(#\Esc #\[ #\4 #\8 #\; #\2 #\; #\2 #\5 #\5 #\; #\2 #\5 #\5 #\; #\2 #\5 #\5 #\m)
                (make-color-string-as-list #xFFFFFF :effect :unset :style :background)))))
 
+(test color-rgb
+      ;; RGB plain
+      (is (equal (coerce (cl-ansi-text:make-color-string "ff0000") 'list)
+                 '(#\Esc #\[ #\3 #\1 #\m)))
+      ;; Web Style
+      (is (equal (coerce (cl-ansi-text:make-color-string "#ff0000") 'list)
+                 '(#\Esc #\[ #\3 #\1 #\m)))
+
+      ;; redux, but with 3 octets not 3 16-lets
+      (is (equal (coerce (cl-ansi-text:make-color-string "f00") 'list)
+                 '(#\Esc #\[ #\3 #\1 #\m)))
+      (is (equal (coerce (cl-ansi-text:make-color-string "#f00") 'list)
+                 '(#\Esc #\[ #\3 #\1 #\m))))
+
 (test color-named-functions
   (let ((str "Test string."))
     (is (equal (black str)
@@ -125,4 +139,3 @@
     (is
      (equal str
             (white (cyan (magenta (blue (yellow (green (red (black str))))))))))))
-

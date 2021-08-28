@@ -5,7 +5,7 @@
   :components ((:file "cl-ansi-text")
                (:file "define-colors"))
   :name "cl-ansi-text"
-  :version "1.2"
+  :version "1.2.1"
   :maintainer "Paul Nathan"
   :author "Paul Nathan"
   :licence "LLGPL"
