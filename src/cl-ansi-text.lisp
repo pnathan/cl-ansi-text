@@ -203,7 +203,7 @@ then writes out the string that resets the decoration."
 
 (defmethod rgb-color-code ((color string) &optional (style :foreground))
   "Takes RGB integer ala Web integers"
-  (rgb-color-code (cl-colors2:hex-to-rgb color)
+  (rgb-color-code (cl-colors2:parse-hex-rgb color)
                   style))
 
 (defmethod rgb-color-code ((color cl-colors2:rgb) &optional (style :foreground))
