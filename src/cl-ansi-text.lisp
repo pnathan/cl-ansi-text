@@ -105,7 +105,7 @@ the terminal setting -- For example, many terminals do not use `FF0000` for the 
        (cons (real 0 256)
              (cons (real 0 256)
                    (cons (real 0 256)
-                         nil)))
+                         null)))
        cl-colors2:rgb
        cl-colors2:hsv
        term-colors
