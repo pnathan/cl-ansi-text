@@ -78,7 +78,7 @@ You can bind the `*enabled*` special variable to `nil` to control the colorizati
     (cons (real 0 256)
           (cons (real 0 256)
                 (cons (real 0 256)
-                      nil)))
+                      null)))
     cl-colors:rgb
     cl-colors:hsv
     term-colors
