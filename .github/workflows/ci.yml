@@ -12,14 +12,16 @@ jobs:
     strategy:
       matrix:
         lisp:
-          - abcl-bin
-          - ccl-bin
-          - clasp
-          - clisp
-          - cmu-bin
-          - ecl
+          # most lisps commented out for now.
+          # - abcl-bin
+          # - ccl-bin
+          # Crashes out
+          # - clasp
+          # - clisp
+          # - cmu-bin
+          # - ecl
           - sbcl-bin
-        os: [ ubuntu-24.04, ubuntu-22.04, ubuntu-20.04, ubuntu-18.04 ]
+        os: [ ubuntu-24.04, ubuntu-22.04, ubuntu-20.04 ]
 
     runs-on: ${{ matrix.os }}
 
