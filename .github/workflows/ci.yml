@@ -16,7 +16,10 @@ jobs:
           - ccl-bin
           - cmucl
           - alisp
-        os: [ ubuntu-20.04, ubuntu-18.04 ]
+          - abcl-bin
+          - clisp-bin
+          - ecl
+        os: [ ubuntu-24.04, ubuntu-22.04, ubuntu-20.04, ubuntu-18.04 ]
 
     runs-on: ${{ matrix.os }}
 
