@@ -26,11 +26,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Roswell
-        uses: 40b/setup-roswell@v1
-        with:
-          lisp: ${{ matrix.lisp }}
-
       - name: Cache Roswell
         uses: actions/cache@v4
         with:
@@ -38,6 +33,11 @@ jobs:
           key: ${{ runner.os }}-roswell-${{ matrix.lisp }}-${{ hashFiles('**/*.asd') }}
           restore-keys: |
             ${{ runner.os }}-roswell-${{ matrix.lisp }}-
+
+      - name: Install Roswell
+        env:
+          LISP: ${{ matrix.lisp }}
+        run: curl -L https://raw.githubusercontent.com/roswell/roswell/master/scripts/install-for-ci.sh | sh
 
       - name: Make test script executable
         run: chmod +x ./testscr.ros
